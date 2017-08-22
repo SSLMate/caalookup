@@ -1,0 +1,21 @@
+caa1				IN	CAA	0 issue "1.example.com"
+caa2				IN	CAA	0 issue "2.example.com"
+caa3.caa1			IN	CAA	0 issue "3.example.com"
+caa4-and-dname			IN	CAA	0 issue "4.example.com"
+caa4-and-dname			IN	DNAME	caa1
+
+cname-to-none			IN	CNAME	none
+cname-to-caa1			IN	CNAME	caa1
+cname-to-caa1-child		IN	CNAME	child.caa1
+
+dname-to-none			IN	DNAME	none
+dname-to-caa1			IN	DNAME	caa1
+dname-to-caa1-child		IN	DNAME	child.caa1
+
+cname-to-none.caa2		IN	CNAME	none
+cname-to-caa1.caa2		IN	CNAME	caa1
+cname-to-caa1-child.caa2	IN	CNAME	child.caa1
+
+dname-to-none.caa2		IN	DNAME	none
+dname-to-caa1.caa2		IN	DNAME	caa1
+dname-to-caa1-child.caa2	IN	DNAME	child.caa1
