@@ -33,6 +33,19 @@ import (
 	"strings"
 )
 
+func getResolver() string {
+	config, err := dns.ClientConfigFromFile("/etc/resolv.conf")
+	if err != nil {
+		panic("Could not load resolv.conf: " + err.Error())
+	}
+	if len(config.Servers) == 0 {
+		panic("resolv.conf does not contain any servers")
+	}
+	return config.Servers[0] + ":53"
+}
+
+var resolver = getResolver()
+
 func queryDNS(domain string, rrtype uint16) (*dns.Msg, error) {
 	msg := &dns.Msg{
 		MsgHdr: dns.MsgHdr{
@@ -46,9 +59,9 @@ func queryDNS(domain string, rrtype uint16) (*dns.Msg, error) {
 	udpClient := &dns.Client{}
 	tcpClient := &dns.Client{Net: "tcp"}
 
-	resp, _, err := udpClient.Exchange(msg, "127.0.0.1:53")
+	resp, _, err := udpClient.Exchange(msg, resolver)
 	if err == dns.ErrTruncated || (err == nil && resp.Truncated) {
-		resp, _, err = tcpClient.Exchange(msg, "127.0.0.1:53")
+		resp, _, err = tcpClient.Exchange(msg, resolver)
 	}
 	if err != nil {
 		return nil, err
