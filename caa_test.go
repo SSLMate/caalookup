@@ -104,3 +104,15 @@ func TestResolveCAA(t *testing.T) {
 		}
 	}
 }
+
+func TestInfiniteRecursion(t *testing.T) {
+	recursions := 0
+	_, err := resolveCAA("cname-to-sub."+TEST_DOMAIN, &recursions)
+	if err == nil {
+		t.Errorf("cname-to-sub: expected an error but got none")
+		return
+	}
+	if err.Error() != "Too many recursions" {
+		t.Errorf("cname-to-sub: expected a 'Too many recursions' error but got '%'", err.Error())
+	}
+}

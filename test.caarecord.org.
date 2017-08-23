@@ -19,3 +19,5 @@ cname-to-caa1-child.caa2	IN	CNAME	child.caa1
 dname-to-none.caa2		IN	DNAME	none
 dname-to-caa1.caa2		IN	DNAME	caa1
 dname-to-caa1-child.caa2	IN	DNAME	child.caa1
+
+cname-to-sub			IN	CNAME	sub.cname-to-sub
