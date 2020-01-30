@@ -113,6 +113,6 @@ func TestInfiniteRecursion(t *testing.T) {
 		return
 	}
 	if err.Error() != "Too many recursions" {
-		t.Errorf("cname-to-sub: expected a 'Too many recursions' error but got '%'", err.Error())
+		t.Errorf("cname-to-sub: expected a 'Too many recursions' error but got '%s'", err.Error())
 	}
 }
