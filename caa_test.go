@@ -36,40 +36,14 @@ type testcaseInfo struct {
 	issue     string
 }
 
-const TEST_DOMAIN = "test.caarecord.org."
-
 var testcases = []testcaseInfo{
-	{"none", ""},
-	{"caa1", "1.example.com"},
-	{"child.caa1", "1.example.com"},
-	{"grand.child.caa1", "1.example.com"},
-	{"cname-to-none", ""},
-	{"cname-to-caa1", "1.example.com"},
-	{"child.cname-to-caa1", "1.example.com"},
-	{"grand.child.cname-to-caa1", "1.example.com"},
-	{"cname-to-caa1-child", "1.example.com"},
-	{"child.cname-to-caa1-child", "1.example.com"},
-	{"grand.child.cname-to-caa1-child", "1.example.com"},
-	{"dname-to-none", ""},
-	{"dname-to-caa1", "1.example.com"},
-	{"dname-to-caa1-child", "1.example.com"},
-	{"child.dname-to-none", ""},
-	{"child.dname-to-caa1", "1.example.com"},
-	{"child.dname-to-caa1-child", "1.example.com"},
-	{"caa3.dname-to-caa1", "3.example.com"},
-	{"child.caa3.dname-to-caa1", "3.example.com"},
-	{"caa4-and-dname", "4.example.com"},
-	{"caa2", "2.example.com"},
-	{"cname-to-none.caa2", "2.example.com"},
-	{"cname-to-caa1.caa2", "1.example.com"},
-	{"cname-to-caa1-child.caa2", "1.example.com"},
-	{"dname-to-none.caa2", "2.example.com"},
-	{"dname-to-caa1.caa2", "1.example.com"},
-	{"dname-to-caa1-child.caa2", "1.example.com"},
-	{"child.dname-to-none.caa2", "2.example.com"},
-	{"child.dname-to-caa1.caa2", "1.example.com"},
-	{"child.dname-to-caa1-child.caa2", "1.example.com"},
-	{"caa3.dname-to-caa1.caa2", "3.example.com"},
+    {"empty.basic.caatestsuite.com.", ";"},
+    {"deny.basic.caatestsuite.com.", "caatestsuite.com"},
+    {"*.deny.basic.caatestsuite.com.", "caatestsuite.com"},
+    {"cname-deny.basic.caatestsuite.com.", "caatestsuite.com"},
+    {"cname-cname-deny.basic.caatestsuite.com.", "caatestsuite.com"},
+    {"sub1.cname-deny.basic.caatestsuite.com.", "caatestsuite.com"},
+    {"deny.permit.basic.caatestsuite.com.", "caatestsuite.com"},
 }
 
 func extractIssue(caa []*dns.CAA) (string, error) {
@@ -88,7 +62,7 @@ func extractIssue(caa []*dns.CAA) (string, error) {
 func TestResolveCAA(t *testing.T) {
 	for _, testcase := range testcases {
 		recursions := 0
-		caa, err := resolveCAA(testcase.subdomain+"."+TEST_DOMAIN, &recursions)
+		caa, err := resolveCAA(testcase.subdomain, &recursions)
 		if err != nil {
 			t.Errorf("%s: got error: %s", testcase.subdomain, err)
 			continue
@@ -102,17 +76,5 @@ func TestResolveCAA(t *testing.T) {
 			t.Errorf("%s: Expected issue '%s', got '%s'", testcase.subdomain, testcase.issue, issue)
 			continue
 		}
-	}
-}
-
-func TestInfiniteRecursion(t *testing.T) {
-	recursions := 0
-	_, err := resolveCAA("cname-to-sub."+TEST_DOMAIN, &recursions)
-	if err == nil {
-		t.Errorf("cname-to-sub: expected an error but got none")
-		return
-	}
-	if err.Error() != "Too many recursions" {
-		t.Errorf("cname-to-sub: expected a 'Too many recursions' error but got '%'", err.Error())
 	}
 }
