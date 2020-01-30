@@ -60,7 +60,7 @@ func queryDNS(domain string, rrtype uint16) (*dns.Msg, error) {
 	tcpClient := &dns.Client{Net: "tcp"}
 
 	resp, _, err := udpClient.Exchange(msg, resolver)
-	if err == dns.ErrTruncated || (err == nil && resp.Truncated) {
+	if err == nil && resp.Truncated {
 		resp, _, err = tcpClient.Exchange(msg, resolver)
 	}
 	if err != nil {
